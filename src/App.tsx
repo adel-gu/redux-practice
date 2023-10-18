@@ -1,25 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import NavBar from './components/NavBar';
+import CardItem from './components/CardItem';
+import Divider from '@mui/material/Divider';
+import { useAppSelector, useAppDispatch } from './hooks';
+import { getItems } from './features/cartSlice';
 
 function App() {
+  const { items, loading, total, itemsOnTheBag } = useAppSelector(
+    (state) => state.cart,
+  );
+  const dispatch = useAppDispatch();
+  React.useEffect(() => {
+    dispatch(getItems());
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <NavBar itemsOnTheBag={itemsOnTheBag} />
+      {loading ? (
+        <h1>loading</h1>
+      ) : (
+        items.map((item) => (
+          <CardItem
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            price={item.price}
+            img={item.img}
+            amount={item.amount}
+          />
+        ))
+      )}
+      <Divider />
+      <h1>Total: $ {total}</h1>
+    </>
   );
 }
 
